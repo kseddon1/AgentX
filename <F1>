@@ -1,0 +1,71 @@
+import os
+import sys
+import speech_recognition as sr
+import pyttsx3
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+from langchain_community.chat_models import ChatOpenAI
+from langchain.chains import ConversationChain
+import warnings
+
+# Suppress all warnings
+warnings.filterwarnings("ignore")
+
+# Initialize the Ollama model
+# Make sure to replace 'your_model' with the name of the Ollama model you are using
+ollama_model = Ollama(model="llama3.2")
+
+r = sr.Recognizer()
+
+# Define a simple prompt template
+template = """
+You are a friendly and helpful chatbot. Respond to the user's message thoughtfully. But, be extremely concise with your responses.  The shorter the better.`
+
+User: {user_input}
+Bot: 
+"""
+prompt = PromptTemplate(input_variables=["user_input"], template=template)
+
+# Create a chain to generate the response using the model
+llm_chain = LLMChain(prompt=prompt, llm=ollama_model)
+
+# Function to interact with the chatbot using invoke
+def chat_with_bot(user_input):
+    # Using invoke method instead of run
+    response = llm_chain.invoke({"user_input": user_input})
+
+    # Parse the response
+    if isinstance(response, dict):
+        # Extract the text or result from the dictionary
+        response_text = response.get("text", "No response text found.")
+        return response_text
+    else:
+        # Handle unexpected formats (if the response is not a dictionary)
+        return str(response)  # Or handle as needed
+
+# Start a conversation loop
+print("Chatbot: Hello! How can I assist you today?")
+while True:
+
+    with sr.Microphone() as source:
+         audio = r.listen(source)
+         try:
+             user_input = r.recognize_google(audio)
+    
+             if user_input.lower() in ["exit", "quit", "bye"]:
+                  os.system(f"echo 'Good bye' | festival --tts")
+                  print("Voicebot: Goodbye!")
+                  exit() 
+
+             #Get response from the chatbot
+             bot_response = chat_with_bot(user_input)
+             bot_response = bot_response.replace("&", "and")
+             bot_response = bot_response.replace("I'm", "I am")
+             bot_response = bot_response.replace("I'll", "I will")
+             bot_response = bot_response.replace("'", "")
+             print(f"Voicebot: {bot_response}")
+             os.system(f"echo '{bot_response}' | festival --tts")
+         except Exception as e:
+             print(str(e))
+

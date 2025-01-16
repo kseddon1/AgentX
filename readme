@@ -1,0 +1,19 @@
+Make sure to activate the virtual environment where the python libraries are installed
+
+source ./venv/bin/activate
+
+
+To run the console based agent selection menu
+
+python launch.py
+
+
+To run voice agent in the background
+
+nohup python voiceChat.py &> /dev/null &
+
+
+To run the multi-page web application
+
+streamlit run webapp.py
+

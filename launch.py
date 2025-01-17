@@ -51,6 +51,7 @@ def main(stdscr):
         "Voice Chat",
         "Voice Chat with Memory",
         "Web Chat",
+        "Web Article Writer",
         "Web Classifier",
         "Web Chat with Memory",
         "Document Retrieval",
@@ -118,6 +119,13 @@ def main(stdscr):
                 stdscr.clear()
                 curses.endwin()
                 subprocess.run("streamlit run webChat.py", shell=True)
+                stdscr.refresh()
+                stdscr.getch()
+            ### --------------------------------------------------------------------------------- ###
+            elif menu[current_option] == "Web Article Writer":
+                stdscr.clear()
+                curses.endwin()
+                subprocess.run("streamlit run webArticleWriter.py", shell=True)
                 stdscr.refresh()
                 stdscr.getch()
             ### --------------------------------------------------------------------------------- ###

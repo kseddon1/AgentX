@@ -119,8 +119,50 @@ class PromptLibrary:
                  """
             webclassifier = Prompt(text=prompt_text, variables=["input"], examples=examples)
 
+            prompt_text = """
+                 As an expert copy-writer, you will write increasingly concise, entity-dense summaries of the user provided {input}. The initial summary should be under 50000 words and contain at least five informative Descriptive Entities from the {input} in english language.
+
+                 A Descriptive Entity is:
+                 - Relevant: to the main story.
+                 - Specific: descriptive yet concise (5 words or fewer).
+                 - Faithful: present in the {input}.
+                 - Anywhere: located anywhere in the {input}.
+
+                 # Your Summarization Process
+                 - Use english as a language
+                 - Read through the {input} and all the below sections to get an understanding of the task.
+                 - Pick informative Descriptive Entities from the {input} (";" delimited, do not add spaces).
+                 - In your output write an initial summary of max 50000 words containing the Entities.
+
+                 Then, repeat the below steps multiple times.
+
+                 - Step 1. In a new dict in the same list, identify one new informative Descriptive Entities from the {input} which are missing from the previously generated summary.
+                 - Step 2. Write a new, denser summary of identical length which covers every Entity and detail from the previous summary plus the new Missing Entities.
+
+                 A Missing Entity is:
+                 - An informative Descriptive Entity from the {input} as defined above.
+                 - Novel: not in the previous summary.
+
+                 # Guidelines
+                 - Make every word count: re-write the previous summary to improve flow and make space for additional entities.
+                 - Make space with fusion, compression, and removal of uninformative phrases like "the {input} discusses".
+                 - The summaries should become highly dense and concise yet self-contained, e.g., easily understood without the {input}.
+                 - Missing entities can appear anywhere in the new summary.
+                 - Never drop entities from the previous summary. If space cannot be made, add fewer new entities.
+                 - Write the summary in english
+
+                 # IMPORTANT
+                 - Remember, to keep each summary to max 50000 words.
+                 - Never remove Entities or details. Only add more from the {input}.
+                 - Do not discuss the {input} itself, focus on the content: informative Descriptive Entities, and details.
+                 - Remember, if you're overusing filler phrases in later summaries, or discussing the {input} itself, not its contents, choose more informative Descriptive Entities and include more details from the {input}.
+                 """
+
+            chain_of_density_content_generation = Prompt(text=prompt_text, variables=["input","chat_history_lines"], examples='')
+
             self.prompt = {
                 "simplechat": simplechat,
                 "simplememorychat": simplememorychat,
-                "webclassifier": webclassifier
+                "webclassifier": webclassifier,
+                "webarticlewriter": chain_of_density_content_generation
             }

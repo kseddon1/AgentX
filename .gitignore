@@ -4,8 +4,6 @@
 __pycache__/
 .env
 venv/
-.textToSpeech.py
-.speechRecognition.py
 
 
 

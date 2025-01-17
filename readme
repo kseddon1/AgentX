@@ -1,5 +1,6 @@
-Collection of LLM Agents leveraging LangChain to implement console, voice, and Web based software agents
-that are capable of chatting, answering questions about documents, and classifying text.
+Collection of LLM Agents leveraging LangChain that can quickly be used to prototype and implement 
+console, voice, and Web based software agents capable of chatting,
+answering questions about documents, and classifying text.
 
 
 Make sure to activate the virtual environment where the python libraries are installed

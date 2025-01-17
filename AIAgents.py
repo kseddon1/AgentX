@@ -229,19 +229,6 @@ class WebChatWithMemory(WebChat):
         return self.web_chat_chain.invoke({"input": user_input})['response']
     
 
-# Define a concrete agent class for memory voice interactions
-class ProblemSolver(WebChat):
-
-    def build_chains(self):
-        #Need to create the solution chain
-        #Need to build the consistency chain
-        #Need to stich them together into a sequential chain
-        self.web_chat_chain = ConversationChain(llm=self.llm, memory=st.session_state.memory, prompt=self.prompt)
-
-    def execute_chain(self, user_input):
-        return self.web_chat_chain.invoke({"input": user_input})['response']
-    
-
 # Define a concrete agent class for summarizing documents
 class DocumentRetrieval(AIAgent):
     def __init__(self):
@@ -308,7 +295,6 @@ class AIAgentFactory:
                 agent = ConsoleChatWithMemory()
             elif agent_type == AgentType.voice:
                 agent = VoiceChat()
-                return agent
             elif agent_type == AgentType.memory_voice:
                 agent = VoiceChatWithMemory()
             elif agent_type == AgentType.web:

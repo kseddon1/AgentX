@@ -25,7 +25,7 @@ if st.session_state["authentication_status"]:
     web_chat_llama = st.Page("webChatWithMemory.py", title="Web Chat (Llama 3.2)", icon=":material/add_circle:")
     web_chat_deepseek = st.Page("webChatDeepSeek.py", title="Web Chat (DeepSeek-r1)", icon=":material/add_circle:")
     web_chat_codellama = st.Page("webChatCodeLlama.py", title="Web Chat (CodeLLama)", icon=":material/add_circle:")
-    web_chat_mistral = st.Page("webChatMistral.py", title="Web Chat (CodeLLama)", icon=":material/add_circle:")
+    web_chat_mistral = st.Page("webChatMistral.py", title="Web Chat (Mistral)", icon=":material/add_circle:")
     web_sentiment_classifier = st.Page("webClassifier.py", title="Web Classifier", icon=":material/add_circle:")
     pg = st.navigation([web_chat_llama, web_chat_deepseek, web_chat_codellama, web_chat_mistral, web_sentiment_classifier])
     pg.run()

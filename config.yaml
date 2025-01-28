@@ -1,0 +1,14 @@
+credentials:
+  usernames:
+    admin:
+      email: example@outlook.com
+      name: John Smith
+      password: '$2b$12$VJUf.rVkbHQ6g/vzrlP6lOabObZtFDf09.dm2T/if6VaNRRnGnBxm' # To be replaced with hashed password
+    plainuser:
+      email: example@gmail.com
+      name: John Doe
+      password: '$2b$12$VJUf.rVkbHQ6g/vzrlP6lOabObZtFDf09.dm2T/if6VaNRRnGnBxm' # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: '298ruweoijf93w84jh' # Must be string
+  name: 'hello'

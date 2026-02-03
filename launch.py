@@ -8,7 +8,7 @@ from AIAgents import ConsoleChat, ConsoleChatWithMemory, VoiceChat, VoiceChatWit
 from Prompts import Prompt, PromptLibrary
 
 from langchain_community.llms import Ollama
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 
 # Function to print the banner in ASCII art
 def print_banner(stdscr, banner_name):
@@ -54,7 +54,6 @@ def main(stdscr):
         "Web Article Writer",
         "Web Classifier",
         "Web Chat with Memory",
-        "Document Retrieval",
         "",
         "Quit"
     ]
@@ -86,7 +85,7 @@ def main(stdscr):
             if menu[current_option] == "Console Chat":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.console, Ollama(model="llama3.2"), library.prompt["simplechat"])
+                agent = factory.create_agent(AgentType.console, Ollama(model="lllama3.2:3b"), library.prompt["simplechat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -94,7 +93,7 @@ def main(stdscr):
             elif menu[current_option] == "Console Chat with Memory":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.memory_console, Ollama(model="llama3.2"), library.prompt["simplememorychat"])
+                agent = factory.create_agent(AgentType.memory_console, Ollama(model="llama3.2:3b"), library.prompt["simplememorychat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -102,7 +101,7 @@ def main(stdscr):
             elif menu[current_option] == "Voice Chat":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.voice, Ollama(model="llama3.2"), library.prompt["simplechat"])
+                agent = factory.create_agent(AgentType.voice, Ollama(model="llama3.2:3b"), library.prompt["simplechat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -110,7 +109,7 @@ def main(stdscr):
             elif menu[current_option] == "Voice Chat with Memory":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.memory_voice, Ollama(model="llama3.2"), library.prompt["simplememorychat"])
+                agent = factory.create_agent(AgentType.memory_voice, Ollama(model="llama3.2:3b"), library.prompt["simplememorychat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -140,13 +139,6 @@ def main(stdscr):
                 stdscr.clear()
                 curses.endwin()
                 subprocess.run("streamlit run webChatWithMemory.py", shell=True)
-                stdscr.refresh()
-                stdscr.getch()
-            ### --------------------------------------------------------------------------------- ###
-            elif menu[current_option] == "Document Retrieval":
-                stdscr.clear()
-                curses.endwin()
-                subprocess.run("streamlit run webDocRetrieval.py", shell=True)
                 stdscr.refresh()
                 stdscr.getch()
             ### --------------------------------------------------------------------------------- ###

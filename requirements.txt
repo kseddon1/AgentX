@@ -22,9 +22,7 @@ langchain-core==0.3.27
 langchain-experimental
 langchain-google-genai
 langchain-google-vertexai
-langchain[docarray]
 langchainhub
-langserve[all]
 numexpr==2.10.0
 opencv-python
 pandoc==1.1.0  # needs system install as well!

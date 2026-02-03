@@ -20,19 +20,18 @@ from DocumentLoaders import load_document, DocumentLoader
 
 from langchain_community.llms import Ollama
 
-from langchain.chains import LLMChain
-from langchain.chains import ConversationChain
-from langchain.chains import ConversationalRetrievalChain
-from langchain.chains import SequentialChain
+from langchain_classic.chains import LLMChain
+from langchain_classic.chains import ConversationChain
+from langchain_classic.chains import ConversationalRetrievalChain
+from langchain_classic.chains import SequentialChain
 
-from langchain.prompts import PromptTemplate, FewShotPromptTemplate
-from langchain.memory import ConversationBufferMemory, CombinedMemory, ConversationSummaryMemory
+from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
+from langchain_classic.memory import ConversationBufferMemory, CombinedMemory, ConversationSummaryMemory
 from langchain_community.callbacks import StreamlitCallbackHandler
 
 from langchain_ollama import OllamaEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores.docarray import DocArrayInMemorySearch
-from langchain.schema import Document
 
 # Define an enum for agent types
 class AgentType(str, Enum):
@@ -42,7 +41,6 @@ class AgentType(str, Enum):
     memory_voice = "memoryvoice"
     web = "web"
     memory_web = "memoryweb"
-    document_web = "documentweb"
 
 # Define an interface for agents
 class AIAgent:
@@ -133,7 +131,7 @@ class VoiceChat(AIAgent):
                           print("Voicebot: Goodbye!")
                           exit() 
                     #Check to see if agent has been called to attention for help
-                     elif user_input.lower() in ["jarvis", "hey jarvis", "hey jarvis wake up", "hey jarvis are you there"]: 
+                     elif user_input.lower() in ["jarvis", "hey jarvis", "wake up","hey jarvis wake up", "hey jarvis are you there"]: 
                           bot_response = self.parse_and_respond("I need your help.")
                           os.system(f"echo '{bot_response}' | festival --tts")
                           self.engage() #Begin responding to voice commands
@@ -229,57 +227,6 @@ class WebChatWithMemory(WebChat):
         return self.web_chat_chain.invoke({"input": user_input})['response']
     
 
-# Define a concrete agent class for summarizing documents
-class DocumentRetrieval(AIAgent):
-    def __init__(self):
-        if 'memory' not in st.session_state:
-           st.session_state.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
-        super().__init__()
-
-    def configure_retriever(self, docs: list[Document]):
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=200)
-        splits = text_splitter.split_documents(docs)
-        embeddings = OllamaEmbeddings(model="llama3.2")
-        vectorDB = DocArrayInMemorySearch.from_documents(splits, embeddings)
-        self.doc_retriever = vectorDB.as_retriever(search_type="mmr", search_kwargs={"k": 2, "fetch_l": 4})
-
-    def build_chains(self):
-        self.document_chain = ConversationalRetrievalChain.from_llm(llm=self.llm, retriever=self.doc_retriever, memory=st.session_state.memory, max_tokens_limit=4000)
-
-    def execute_chain(self, user_input):
-        model_response = self.document_chain.invoke( {"question": user_input, "chat_history": st.session_state.memory.chat_memory.messages})
-        return model_response.get("answer", "No response text found.")
-
-    def interact_with_user(self):
-        container = st.container()
-        uploaded_files = st.sidebar.file_uploader(
-            label="Upload files",
-            type=list(DocumentLoader.supported_extensions.keys()),
-            accept_multiple_files=True
-        )
-        if not uploaded_files:
-            st.info("Please upload documents to continue.")
-            st.stop()
-
-        docs = []
-        temp_dir = tempfile.TemporaryDirectory()
-        for file in uploaded_files:
-           temp_filepath = os.path.join(temp_dir.name, file.name)
-           with open(temp_filepath, "wb") as f:
-              f.write(file.getvalue())
-           docs.extend(load_document(temp_filepath))
-
-        self.configure_retriever(docs)
-        self.build_chains()
-        stream_handler = StreamlitCallbackHandler(container)
-
-        if prompt := st.chat_input(placeholder="Ask me anything!"):
-           st.chat_message("user").write(prompt)
-           with st.chat_message("assistant"):
-              response = self.execute_chain(prompt)
-              st.write(response)
-
-
 
 # Define a factory class to create agents based on type and prompt
 class AIAgentFactory:
@@ -301,8 +248,6 @@ class AIAgentFactory:
                 agent = WebChat()
             elif agent_type == AgentType.memory_web:
                 agent = WebChatWithMemory()
-            elif agent_type == AgentType.document_web:
-                agent = DocumentRetrieval()
             
             agent.set_llm(llm)
             agent.set_prompt(prompt)

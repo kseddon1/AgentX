@@ -3,11 +3,11 @@
 from AIAgents import WebChat, AgentType, AIAgentFactory
 from Prompts import Prompt, PromptLibrary
 
-from langchain_community.llms import Ollama
-from langchain_core.prompts import PromptTemplate
+from langchain_community.llms.ollama import Ollama
+# PromptTemplate not required in 1.x – not imported
 
 library = PromptLibrary()
 factory = AIAgentFactory()
-agent = factory.create_agent(AgentType.memory_web, Ollama(model="llama3.2:3b"), library.prompt["simplememorychat"])
+agent = factory.create_agent(AgentType.memory_web, Ollama(model="gemma4:31b"), library.prompt["simplememorychat"])
 agent.build_chains()
 agent.interact_with_user()

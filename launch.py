@@ -85,7 +85,7 @@ def main(stdscr):
             if menu[current_option] == "Console Chat":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.console, Ollama(model="lllama3.2:3b"), library.prompt["simplechat"])
+                agent = factory.create_agent(AgentType.console, Ollama(model="gemma4:31b"), library.prompt["simplechat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -93,7 +93,7 @@ def main(stdscr):
             elif menu[current_option] == "Console Chat with Memory":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.memory_console, Ollama(model="llama3.2:3b"), library.prompt["simplememorychat"])
+                agent = factory.create_agent(AgentType.memory_console, Ollama(model="gemma4:31b"), library.prompt["simplememorychat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -101,7 +101,7 @@ def main(stdscr):
             elif menu[current_option] == "Voice Chat":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.voice, Ollama(model="llama3.2:3b"), library.prompt["simplechat"])
+                agent = factory.create_agent(AgentType.voice, Ollama(model="gemma4:31b"), library.prompt["simplechat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break
@@ -109,7 +109,7 @@ def main(stdscr):
             elif menu[current_option] == "Voice Chat with Memory":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.memory_voice, Ollama(model="llama3.2:3b"), library.prompt["simplememorychat"])
+                agent = factory.create_agent(AgentType.memory_voice, Ollama(model="gemma4:31b"), library.prompt["simplememorychat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break

@@ -8,6 +8,6 @@ from langchain.prompts import PromptTemplate
 
 library = PromptLibrary()
 factory = AIAgentFactory()
-agent = factory.create_agent(AgentType.web, Ollama(model="llama3.2"), library.prompt["websolver"])
+agent = factory.create_agent(AgentType.web, Ollama(model="gemma4:31b"), library.prompt["websolver"])
 agent.build_chains()
 agent.interact_with_user()

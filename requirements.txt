@@ -4,9 +4,6 @@ arxiv==2.1.0
 docarray
 duckduckgo_search
 faiss-cpu==1.8.0
-google-api-python-client
-google-cloud-aiplatform
-google-generativeai
 gpt4all==2.3.2
 gradio==3.50.2
 httpx==0.27.2
@@ -14,14 +11,10 @@ huggingface-hub
 jupyter
 lanarky
 langchain
-langchain-anthropic
-langchain-chroma
 langchain-cli
-langchain-cohere
-langchain-core==0.3.27 
-langchain-experimental
-langchain-google-genai
-langchain-google-vertexai
+langchain-classic
+lanchain-community
+langchain-ollama
 langchainhub
 numexpr==2.10.0
 opencv-python
@@ -41,3 +34,5 @@ tiktoken==0.6.0
 unstructured
 wikipedia==1.4.0
 wolframalpha==5.0.0
+pyfiglet
+SpeechRecognition

@@ -8,6 +8,6 @@ from langchain.prompts import PromptTemplate
 
 library = PromptLibrary()
 factory = AIAgentFactory()
-agent = factory.create_agent(AgentType.web, Ollama(model="lllama3.2:3b"), library.prompt["simplechat"])
+agent = factory.create_agent(AgentType.web, Ollama(model="gemma4:31b"), library.prompt["simplechat"])
 agent.build_chains()
 agent.interact_with_user()

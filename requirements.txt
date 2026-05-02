@@ -3,7 +3,7 @@ apify-client==1.6.4
 arxiv==2.1.0
 docarray
 duckduckgo_search
-faiss-cpu==1.8.0
+faiss-cpu
 gpt4all==2.3.2
 gradio==3.50.2
 httpx==0.27.2

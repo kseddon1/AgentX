@@ -9,6 +9,14 @@
 import os
 import sys
 import tempfile
+import sounddevice as sd
+import numpy as np
+import scipy.io.wavfile as wav
+import tempfile
+import pyttsx3
+import queue
+import time
+
 from enum import Enum
 from typing import Optional
 
@@ -103,7 +111,6 @@ class ConsoleChatWithMemory(ConsoleChat):
     def execute_chain(self, user_input):
         return self.chat_chain.invoke({"input": user_input})['response']
 
-# Define a concrete agent class for voice interactions
 class VoiceChat(AIAgent):
     def __init__(self):
         self.r = sr.Recognizer()
@@ -116,71 +123,94 @@ class VoiceChat(AIAgent):
         model_response = self.voice_chat_chain.invoke({"input": user_input})
         return model_response.get("text", "No response text found.")
 
+    # 🎤 NEW: record audio without PyAudio
+    def record_audio(self, fs=16000, silence_threshold=500, silence_duration=10):
+        print("🎤 Listening...")
+    
+        q = queue.Queue()
+
+        def callback(indata, frames, time, status):
+            q.put(indata.copy())
+
+        silence_chunks = 0
+        max_silence_chunks = int(silence_duration * fs / 1024)
+
+        recording = []
+
+        with sd.InputStream(samplerate=fs, channels=1, dtype='int16', callback=callback):
+            while True:
+                chunk = q.get()
+                recording.append(chunk)
+
+                volume = np.abs(chunk).mean()
+
+                if volume < silence_threshold:
+                    silence_chunks += 1
+                else:
+                    silence_chunks = 0  # reset if speech resumes
+
+                # stop after enough silence
+                if silence_chunks > max_silence_chunks:
+                    break
+
+        audio_data = np.concatenate(recording, axis=0)
+        return fs, audio_data
+
+    # 🔊 NEW: Windows TTS
+    def speak(self, text):
+        try:
+
+            print(f"TTS → {text}")
+
+            engine = pyttsx3.init()
+            engine.say(text)
+            engine.runAndWait()
+            engine.stop()
+            
+        except Exception as e:
+            print(f"TTS ERROR: {e}")
+
+
+    def listen_and_transcribe(self):
+        fs, audio_data = self.record_audio()
+        if audio_data is None:
+            return ""
+
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+            wav.write(f.name, fs, audio_data)
+            filename = f.name
+
+        with sr.AudioFile(filename) as source:
+            audio = self.r.record(source)
+
+        try:
+            print("🧠 Recognizing...")
+            text = self.r.recognize_google(audio)
+            print(f"✅ You said: {text}")
+        except Exception as e:
+            print(f"❌ Recognition failed: {e}")
+            text = ""
+
+        os.remove(filename)
+        return text
+
     def interact_with_user(self):
         while True:
+            user_input = self.listen_and_transcribe()
+            if not user_input:
+                continue
 
-            with sr.Microphone() as source:
-                 audio = self.r.listen(source)
-                 try:
-                     user_input = self.r.recognize_google(audio)
-                     print(f"User Input: {user_input}")
-    
-                     #Check to see if agent needs to terminate
-                     if user_input.lower() in ["shutdown", "shut down", "power down", "go to sleep"]:
-                          os.system(f"echo 'Goodbye' | festival --tts")
-                          print("Voicebot: Goodbye!")
-                          exit() 
-                    #Check to see if agent has been called to attention for help
-                     elif user_input.lower() in ["jarvis", "hey jarvis", "wake up","hey jarvis wake up", "hey jarvis are you there"]: 
-                          bot_response = self.parse_and_respond("I need your help.")
-                          os.system(f"echo '{bot_response}' | festival --tts")
-                          self.engage() #Begin responding to voice commands
+            else:
+                 bot_response = self.parse_and_respond(user_input)
+                 self.speak(bot_response)
 
-                 except Exception as e:
-                     print(str(e))
 
     def parse_and_respond(self, user_input):
-
-        # Using invoke method to execute chain
         response_text = self.execute_chain(user_input)
-        response_text = response_text.replace("&", "and")
-        response_text = response_text.replace("I'm", "I am")
-        response_text = response_text.replace("Isn't", "Is not")
-        response_text = response_text.replace("isn't", "is not")
-        response_text = response_text.replace("I'll", "I will")
-        response_text = response_text.replace("24/7", "24 by 7")
-        response_text = response_text.replace("They're", "They are")
-        response_text = response_text.replace("they're", "they are")
-        response_text = response_text.replace("'", "")
+
         print(f"Bot Response: {response_text}")
         return response_text
-    
-    def engage(self):
-        while True:
 
-            with sr.Microphone() as source:
-                 audio = self.r.listen(source)
-                 try:
-                     user_input = self.r.recognize_google(audio)
-                     print(f"User Input: {user_input}")
-    
-                     #Check to see if help is no longer needed
-                     if user_input.lower() in ["that is all", "that is all I need", "that is all I needed", "give me a moment"]:
-                          bot_response = self.parse_and_respond("That is all I need, but stay ready in case I need your help in the future.")
-                          os.system(f"echo '{bot_response}' | festival --tts")
-                          break
-                     #Check to see if agent needs to terminate
-                     elif user_input.lower() in ["shutdown", "shut down", "power down"]:
-                          os.system(f"echo 'Goodbye' | festival --tts")
-                          print("Voicebot: Goodbye!")
-                          exit() 
-                     #Get standard voice chat response
-                     else: 
-                          bot_response = self.parse_and_respond(user_input)
-                          os.system(f"echo '{bot_response}' | festival --tts")
-
-                 except Exception as e:
-                     print(str(e))
 
 # Define a concrete agent class for memory voice interactions
 class VoiceChatWithMemory(VoiceChat):

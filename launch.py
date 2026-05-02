@@ -101,7 +101,7 @@ def main(stdscr):
             elif menu[current_option] == "Voice Chat":
                 stdscr.clear()
                 curses.endwin()
-                agent = factory.create_agent(AgentType.voice, Ollama(model="gemma4:31b"), library.prompt["simplechat"])
+                agent = factory.create_agent(AgentType.voice, Ollama(model="llama3.2:3b"), library.prompt["simplechat"])
                 agent.build_chains()
                 agent.interact_with_user()
                 break

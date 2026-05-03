@@ -67,7 +67,6 @@ class VoiceAgent(AIAgent):
     def speak(self, text):
         print(f"AI: {text}")
         
-        
         try:
             engine = pyttsx3.init()
             engine.say(text)
@@ -112,21 +111,21 @@ class VoiceAgent(AIAgent):
         return None
 
     def get_input(self):
-        user_input = self.listen()
-        if not user_input:
-            user_input = input("Voice failed. Please type: ")
-        return user_input
+        return self.listen()
 
     def run_loop(self):
         print("Voice Agent Ready. Speak into the microphone.")
         while True:
             user_input = self.get_input()
-            if user_input and user_input.lower() in ["exit", "quit"]:
+            if not user_input:
+                continue
+            
+            if user_input.lower() in ["exit", "quit", "shutdown"]:
                 break
-            if user_input:
-                print(f"User: {user_input}")
-                response = self.execute_chain(user_input)
-                self.speak(response)
+            
+            print(f"User: {user_input}")
+            response = self.execute_chain(user_input)
+            self.speak(response)
 
 class VoiceAgentWithMemory(VoiceAgent):
     def __init__(self):

@@ -79,7 +79,7 @@ class VoiceAgent(AIAgent):
     def listen(self):
         try:
             fs = 44100 
-            duration = 5 # seconds
+            duration = 8 # seconds
             print("Listening...")
             
             # Record as float32

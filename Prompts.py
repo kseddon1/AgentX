@@ -23,7 +23,7 @@ class PromptLibrary:
 
             #Zero Shot Prompt
             prompt_text = """
-                 You are a friendly and helpful chatbot. Respond to the user's message thoughtfully and concisely.  Use as few words as possible.`
+                 You are a friendly and helpful chatbot. Respond to the user's message thoughtfully and concisely. Only say what is necessary to respond.  Don't create lists, summaries, or bullet points.  Ask the user if they would like for you to expand on a topic, and only if they say yes to that, do you provide longer responses.`
 
                  Current conversation:
                  {chat_history_lines}

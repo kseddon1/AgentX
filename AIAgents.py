@@ -186,7 +186,7 @@ class VoiceAgent(AIAgent):
     def listen(self):
         try:
             fs = 44100 
-            duration = 8 
+            duration = 6
             print("Listening...")
             recording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
             sd.wait()

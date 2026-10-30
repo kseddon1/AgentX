@@ -52,7 +52,7 @@ def main():
 
         # 2. Select Model
         # You can expand this list with your available Ollama models
-        model_options = ["llama3.2:3b", "llama3.1:8b", "gpt-oss:20b", "gemma4:31b"]
+        model_options = ["llama3.2:3b", "llama3.1:8b", "gpt-oss:20b", "gemma4:26b", "gemma4:31b"]
         m_idx = get_user_choice(stdscr, model_options)
         selected_model = model_options[m_idx]
 
